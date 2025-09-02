@@ -96,6 +96,11 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .question-bank-info {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -169,6 +174,7 @@
                     <div id="quiz-area">
                         <div class="has-text-centered mb-5">
                             <p class="is-size-5 has-text-weight-semibold">Questão <span id="current-question">1</span> de <span id="total-questions">10</span></p>
+                            <p class="question-bank-info">Banco com 30 questões - Sorteadas aleatoriamente</p>
                             <progress id="progress" class="progress is-info" value="10" max="100">10%</progress>
                         </div>
                         
@@ -231,8 +237,8 @@
     </section>
 
     <script>
-        // Banco de questões
-        const questions = [
+        // Banco de questões ampliado (30 questões)
+        const questionBank = [
             {
                 question: "O que significa a sigla 'CPU'?",
                 options: [
@@ -332,6 +338,206 @@
                     "Public Document Form"
                 ],
                 correct: 1
+            },
+            {
+                question: "Qual linguagem de programação é conhecida por ser usada para desenvolvimento web front-end?",
+                options: [
+                    "Python",
+                    "Java",
+                    "HTML",
+                    "C++"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é um 'bug' em computação?",
+                options: [
+                    "Um tipo de antivírus",
+                    "Um erro ou defeito em um software",
+                    "Um dispositivo de hardware",
+                    "Um tipo de algoritmo"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual destes é um banco de dados relacional popular?",
+                options: [
+                    "MongoDB",
+                    "MySQL",
+                    "Redis",
+                    "Elasticsearch"
+                ],
+                correct: 1
+            },
+            {
+                question: "O que significa a sigla 'RAM'?",
+                options: [
+                    "Random Access Memory",
+                    "Readily Available Memory",
+                    "Rapid Access Module",
+                    "Random Allocation Memory"
+                ],
+                correct: 0
+            },
+            {
+                question: "Qual destes NÃO é um protocolo de internet?",
+                options: [
+                    "HTTP",
+                    "FTP",
+                    "HTML",
+                    "TCP"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é um 'cookie' na web?",
+                options: [
+                    "Um tipo de vírus",
+                    "Um pequeno arquivo de dados armazenado no navegador",
+                    "Um protocolo de segurança",
+                    "Um tipo de hardware"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual empresa criou o sistema operacional Windows?",
+                options: [
+                    "Apple",
+                    "Google",
+                    "Microsoft",
+                    "IBM"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é 'HTML5'?",
+                options: [
+                    "Uma linguagem de programação",
+                    "Uma versão atualizada da linguagem de marcação HTML",
+                    "Um tipo de banco de dados",
+                    "Um protocolo de rede"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual destes é um serviço de armazenamento em nuvem?",
+                options: [
+                    "Google Drive",
+                    "Microsoft Word",
+                    "Adobe Photoshop",
+                    "Windows Explorer"
+                ],
+                correct: 0
+            },
+            {
+                question: "O que significa a sigla 'URL'?",
+                options: [
+                    "Uniform Resource Locator",
+                    "Universal Reference Link",
+                    "Unified Resource Location",
+                    "Universal Resource Locator"
+                ],
+                correct: 0
+            },
+            {
+                question: "Qual destes é um framework JavaScript para construção de interfaces?",
+                options: [
+                    "Django",
+                    "Laravel",
+                    "React",
+                    "Spring"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é 'phishing'?",
+                options: [
+                    "Um tipo de pescaria",
+                    "Uma técnica de fraude online",
+                    "Um protocolo de rede",
+                    "Um método de programação"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual destes é um sistema de controle de versão?",
+                options: [
+                    "Git",
+                    "Java",
+                    "Python",
+                    "HTML"
+                ],
+                correct: 0
+            },
+            {
+                question: "O que é um 'driver' em computação?",
+                options: [
+                    "Um tipo de software que controla um dispositivo de hardware",
+                    "Um programa para navegar na internet",
+                    "Um tipo de vírus",
+                    "Um algoritmo de ordenação"
+                ],
+                correct: 0
+            },
+            {
+                question: "Qual destes é um método de autenticação segura?",
+                options: [
+                    "Senha '123456'",
+                    "Autenticação de dois fatores",
+                    "Usar o mesmo password em todos os serviços",
+                    "Compartilhar senhas com amigos"
+                ],
+                correct: 1
+            },
+            {
+                question: "O que é 'CSS' no desenvolvimento web?",
+                options: [
+                    "Computer Style System",
+                    "Cascading Style Sheets",
+                    "Creative Style Software",
+                    "Centralized Styling Service"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual destes é um tipo de malware?",
+                options: [
+                    "Firewall",
+                    "Antivírus",
+                    "Ransomware",
+                    "JavaScript"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é 'IoT'?",
+                options: [
+                    "Internet of Things",
+                    "International Online Technology",
+                    "Internet Organization Team",
+                    "Integrated Online Transfer"
+                ],
+                correct: 0
+            },
+            {
+                question: "Qual destes é um algoritmo de busca na internet?",
+                options: [
+                    "Google",
+                    "Windows",
+                    "Photoshop",
+                    "Excel"
+                ],
+                correct: 0
+            },
+            {
+                question: "O que é 'cloud computing'?",
+                options: [
+                    "Computação em nuvem",
+                    "Um tipo de hardware",
+                    "Um programa de edição de texto",
+                    "Um protocolo de internet"
+                ],
+                correct: 0
             }
         ];
 
@@ -343,6 +549,7 @@
         let gameActive = false;
         let revealInterval;
         let answerSelected = false;
+        let questions = [];
         
         // Elementos DOM
         const teamACard = document.getElementById('teamA-card');
@@ -369,6 +576,21 @@
         const notificationMessage = document.getElementById('notification-message');
         const closeNotification = document.getElementById('close-notification');
 
+        // Função para selecionar 10 questões aleatórias
+        function selectRandomQuestions() {
+            // Criar uma cópia do banco de questões
+            const shuffled = [...questionBank];
+            
+            // Embaralhar as questões
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            
+            // Selecionar as primeiras 10 questões
+            return shuffled.slice(0, 10);
+        }
+
         // Função para mostrar notificação
         function showNotification(message, type = 'success') {
             notification.className = `notification is-${type} show`;
@@ -381,10 +603,15 @@
 
         // Inicializar quiz
         function initQuiz() {
+            // Selecionar 10 questões aleatórias
+            questions = selectRandomQuestions();
+            
             totalQuestionsElement.textContent = questions.length;
             loadQuestion();
             gameActive = true;
             answerSelected = false;
+            
+            showNotification("Novo jogo iniciado! 10 questões selecionadas aleatoriamente.");
         }
 
         // Carregar questão
@@ -589,8 +816,12 @@
             teamBScoreElement.textContent = "0";
             resultsArea.classList.add('is-hidden');
             quizArea.classList.remove('is-hidden');
+            
+            // Selecionar novas questões aleatórias
+            questions = selectRandomQuestions();
+            
             loadQuestion();
-            showNotification("Quiz reiniciado! Boa sorte para os times!");
+            showNotification("Novo jogo iniciado! 10 questões selecionadas aleatoriamente.");
         }
 
         // Event Listeners
