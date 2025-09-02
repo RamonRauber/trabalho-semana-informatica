@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semana de Informática - Quiz Competitivo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .header-title {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .team-card {
+            transition: all 0.3s;
+        }
+        .team-card.active {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+        }
+        .option-button {
+            transition: all 0.3s;
+            margin: 8px auto;
+            display: block;
+            width: 90%;
+        }
+        .option-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .buzzer {
+            transition: all 0.2s;
+        }
+        .buzzer:active {
+            transform: scale(0.95);
+        }
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .option-container {
+            min-height: 250px;
+        }
+        .auto-reveal-indicator {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .next-btn-container {
+            margin-top: 20px;
+        }
+        .reveal-all-btn {
+            margin-top: 10px;
+        }
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.5s ease;
+        }
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification is-success" id="notification">
+        <button class="delete" id="close-notification"></button>
+        <div id="notification-message">Operação realizada com sucesso!</div>
+    </div>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="title is-1 has-text-centered has-text-white header-title">Semana de Informática</h1>
+            <p class="subtitle is-4 has-text-centered has-text-light">Quiz Competitivo</p>
+            
+            <div class="columns">
+                <!-- Time A -->
+                <div class="column">
+                    <div id="teamA-card" class="card team-card">
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-left">
+                                    <figure class="image is-48x48">
+                                        <i class="fas fa-desktop has-text-primary"></i>
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <p class="title is-4">Time A</p>
+                                    <p class="subtitle is-6">Clique para responder</p>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="score-display has-text-centered has-text-primary" id="teamA-score">0</div>
+                                <button id="buzzer-teamA" class="button is-fullwidth is-primary buzzer mt-4">
+                                    <span class="icon"><i class="fas fa-bolt"></i></span>
+                                    <span>Responder!</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Time B -->
+                <div class="column">
+                    <div id="teamB-card" class="card team-card">
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-left">
+                                    <figure class="image is-48x48">
+                                        <i class="fas fa-laptop has-text-danger"></i>
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <p class="title is-4">Time B</p>
+                                    <p class="subtitle is-6">Clique para responder</p>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="score-display has-text-centered has-text-danger" id="teamB-score">0</div>
+                                <button id="buzzer-teamB" class="button is-fullwidth is-danger buzzer mt-4">
+                                    <span class="icon"><i class="fas fa-bolt"></i></span>
+                                    <span>Responder!</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Área do Quiz -->
+            <div class="card">
+                <div class="card-content">
+                    <div id="quiz-area">
+                        <div class="has-text-centered mb-5">
+                            <p class="is-size-5 has-text-weight-semibold">Questão <span id="current-question">1</span> de <span id="total-questions">10</span></p>
+                            <progress id="progress" class="progress is-info" value="10" max="100">10%</progress>
+                        </div>
+                        
+                        <h2 id="question-text" class="title is-3 has-text-centered mb-6">Pergunta será exibida aqui</h2>
+                        
+                        <div class="has-text-centered auto-reveal-indicator">
+                            <p><i class="fas fa-info-circle"></i> As alternativas aparecerão automaticamente uma por uma</p>
+                            <button id="reveal-all-btn" class="button is-small is-warning reveal-all-btn">
+                                <span class="icon"><i class="fas fa-forward"></i></span>
+                                <span>Revelar Todas</span>
+                            </button>
+                        </div>
+                        
+                        <div id="options-container" class="option-container">
+                            <!-- Opções serão inseridas via JavaScript -->
+                        </div>
+                        
+                        <div class="has-text-centered next-btn-container">
+                            <button id="next-btn" class="button is-info is-large">
+                                <span class="icon"><i class="fas fa-arrow-right"></i></span>
+                                <span>Próxima Questão</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="results-area" class="is-hidden">
+                        <div class="has-text-centered">
+                            <i class="fas fa-trophy result-icon has-text-warning floating"></i>
+                            <h2 class="title is-2">Quiz Concluído!</h2>
+                            <p class="subtitle is-4">Pontuação Final</p>
+                            
+                            <div class="columns is-centered">
+                                <div class="column is-half">
+                                    <div class="box">
+                                        <div class="title is-4">Time A</div>
+                                        <div class="score-display has-text-primary" id="final-teamA-score">0</div>
+                                    </div>
+                                </div>
+                                <div class="column is-half">
+                                    <div class="box">
+                                        <div class="title is-4">Time B</div>
+                                        <div class="score-display has-text-danger" id="final-teamB-score">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="winner-box" class="box has-background-warning">
+                                <h3 class="title is-3" id="winner-text">Vencedor: Time A</h3>
+                            </div>
+                            
+                            <button id="restart-btn" class="button is-info is-large">
+                                <span class="icon"><i class="fas fa-redo"></i></span>
+                                <span>Jogar Novamente</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Banco de questões
+        const questions = [
+            {
+                question: "O que significa a sigla 'CPU'?",
+                options: [
+                    "Computador Pessoal de Uso",
+                    "Central Processing Unit",
+                    "Controle de Processos Urgentes",
+                    "Computador Portátil Universal"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual destes NÃO é um sistema operacional?",
+                options: [
+                    "Windows",
+                    "Linux",
+                    "Microsoft Word",
+                    "macOS"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quantos bits formam um byte?",
+                options: [
+                    "4 bits",
+                    "8 bits",
+                    "16 bits",
+                    "32 bits"
+                ],
+                correct: 1
+            },
+            {
+                question: "O que é um 'URL'?",
+                options: [
+                    "Um programa de computador",
+                    "Um tipo de hardware",
+                    "O endereço de um site na internet",
+                    "Um protocolo de segurança"
+                ],
+                correct: 2
+            },
+            {
+                question: "Qual destes é um navegador de internet?",
+                options: [
+                    "Photoshop",
+                    "Excel",
+                    "Google Chrome",
+                    "PowerPoint"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que significa 'HTML'?",
+                options: [
+                    "HyperText Markup Language",
+                    "HighTech Modern Language",
+                    "Hyper Transfer Modern Language",
+                    "HighText Machine Language"
+                ],
+                correct: 0
+            },
+            {
+                question: "Qual empresa desenvolveu o sistema Android?",
+                options: [
+                    "Apple",
+                    "Microsoft",
+                    "Google",
+                    "IBM"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é um 'firewall'?",
+                options: [
+                    "Um dispositivo de armazenamento",
+                    "Um sistema de segurança de rede",
+                    "Um tipo de monitor",
+                    "Um programa de edição de texto"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual destes é um dispositivo de entrada?",
+                options: [
+                    "Monitor",
+                    "Impressora",
+                    "Teclado",
+                    "Caixas de som"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que significa 'PDF'?",
+                options: [
+                    "Printable Document Format",
+                    "Portable Document Format",
+                    "Personal Data File",
+                    "Public Document Form"
+                ],
+                correct: 1
+            }
+        ];
+
+        // Variáveis de estado
+        let currentQuestionIndex = 0;
+        let teamAScore = 0;
+        let teamBScore = 0;
+        let currentTeam = null;
+        let gameActive = false;
+        let revealInterval;
+        let answerSelected = false;
+        
+        // Elementos DOM
+        const teamACard = document.getElementById('teamA-card');
+        const teamBCard = document.getElementById('teamB-card');
+        const teamAScoreElement = document.getElementById('teamA-score');
+        const teamBScoreElement = document.getElementById('teamB-score');
+        const finalTeamAScore = document.getElementById('final-teamA-score');
+        const finalTeamBScore = document.getElementById('final-teamB-score');
+        const buzzerTeamA = document.getElementById('buzzer-teamA');
+        const buzzerTeamB = document.getElementById('buzzer-teamB');
+        const quizArea = document.getElementById('quiz-area');
+        const resultsArea = document.getElementById('results-area');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const winnerText = document.getElementById('winner-text');
+        const winnerBox = document.getElementById('winner-box');
+        const revealAllBtn = document.getElementById('reveal-all-btn');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const closeNotification = document.getElementById('close-notification');
+
+        // Função para mostrar notificação
+        function showNotification(message, type = 'success') {
+            notification.className = `notification is-${type} show`;
+            notificationMessage.textContent = message;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Inicializar quiz
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            gameActive = true;
+            answerSelected = false;
+        }
+
+        // Carregar questão
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            questionText.textContent = currentQuestion.question;
+            
+            // Atualizar barra de progresso
+            progressBar.value = ((currentQuestionIndex + 1) / questions.length) * 100;
+            
+            // Limpar opções anteriores
+            optionsContainer.innerHTML = '';
+            answerSelected = false;
+            
+            // Reiniciar o estado dos buzzers
+            resetBuzzers();
+            
+            // Esconder o botão de próxima pergunta inicialmente
+            nextBtn.classList.add('is-hidden');
+            
+            // Iniciar a revelação automática das opções
+            startAutoReveal();
+        }
+
+        // Iniciar revelação automática das opções
+        function startAutoReveal() {
+            clearInterval(revealInterval);
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            let optionIndex = 0;
+            
+            revealInterval = setInterval(() => {
+                if (optionIndex < currentQuestion.options.length) {
+                    revealOption(optionIndex);
+                    optionIndex++;
+                } else {
+                    clearInterval(revealInterval);
+                }
+            }, 1000);
+        }
+
+        // Revelar uma alternativa específica
+        function revealOption(index) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const option = document.createElement('button');
+            option.className = 'button option-button is-info fade-in';
+            option.textContent = currentQuestion.options[index];
+            option.dataset.index = index;
+            option.addEventListener('click', () => checkAnswer(index));
+            optionsContainer.appendChild(option);
+        }
+
+        // Revelar todas as alternativas de uma vez
+        function revealAllOptions() {
+            clearInterval(revealInterval);
+            const currentQuestion = questions[currentQuestionIndex];
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                revealOption(index);
+            });
+            
+            showNotification("Todas as alternativas foram reveladas!");
+        }
+
+        // Resetar buzzers
+        function resetBuzzers() {
+            currentTeam = null;
+            teamACard.classList.remove('active');
+            teamBCard.classList.remove('active');
+            buzzerTeamA.disabled = false;
+            buzzerTeamB.disabled = false;
+            buzzerTeamA.classList.remove('is-success', 'is-light');
+            buzzerTeamB.classList.remove('is-danger', 'is-light');
+            gameActive = true;
+        }
+
+        // Desativar buzzers
+        function disableBuzzers() {
+            buzzerTeamA.disabled = true;
+            buzzerTeamB.disabled = true;
+            gameActive = false;
+        }
+
+        // Um time pressiona o buzzer
+        function teamBuzzIn(team) {
+            if (!gameActive || answerSelected) return;
+            
+            gameActive = false;
+            currentTeam = team;
+            disableBuzzers();
+            
+            if (team === 'A') {
+                teamACard.classList.add('active');
+                buzzerTeamA.classList.add('is-success');
+                buzzerTeamB.classList.add('is-light');
+                showNotification("Time A pressionou o buzzer primeiro!");
+            } else {
+                teamBCard.classList.add('active');
+                buzzerTeamB.classList.add('is-danger');
+                buzzerTeamA.classList.add('is-light');
+                showNotification("Time B pressionou o buzzer primeiro!");
+            }
+        }
+
+        // Verificar resposta
+        function checkAnswer(optionIndex) {
+            if (!currentTeam || answerSelected) return;
+            
+            answerSelected = true;
+            const currentQuestion = questions[currentQuestionIndex];
+            const options = optionsContainer.querySelectorAll('.button');
+            
+            // Desabilitar todos os botões após a seleção
+            options.forEach(button => {
+                button.disabled = true;
+            });
+            
+            // Verificar se a resposta está correta
+            if (optionIndex === currentQuestion.correct) {
+                options[optionIndex].classList.remove('is-info');
+                options[optionIndex].classList.add('is-success');
+                
+                // Adicionar pontos
+                if (currentTeam === 'A') {
+                    teamAScore += 10;
+                    teamAScoreElement.textContent = teamAScore;
+                    showNotification("Time A acertou! +10 pontos", "success");
+                } else {
+                    teamBScore += 10;
+                    teamBScoreElement.textContent = teamBScore;
+                    showNotification("Time B acertou! +10 pontos", "success");
+                }
+                
+                questionText.textContent = "Resposta correta! +10 pontos";
+            } else {
+                options[optionIndex].classList.remove('is-info');
+                options[optionIndex].classList.add('is-danger');
+                options[currentQuestion.correct].classList.remove('is-info');
+                options[currentQuestion.correct].classList.add('is-success');
+                
+                if (currentTeam === 'A') {
+                    showNotification("Time A errou! A resposta correta foi destacada.", "danger");
+                } else {
+                    showNotification("Time B errou! A resposta correta foi destacada.", "danger");
+                }
+                
+                questionText.textContent = "Resposta incorreta!";
+            }
+            
+            // Parar a revelação automática
+            clearInterval(revealInterval);
+            
+            // Mostrar o botão de próxima pergunta
+            nextBtn.classList.remove('is-hidden');
+        }
+
+        // Próxima questão
+        function nextQuestion() {
+            // Avançar para a próxima pergunta
+            currentQuestionIndex++;
+            
+            // Verificar se ainda há perguntas
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Mostrar resultados
+        function showResults() {
+            quizArea.classList.add('is-hidden');
+            resultsArea.classList.remove('is-hidden');
+            
+            finalTeamAScore.textContent = teamAScore;
+            finalTeamBScore.textContent = teamBScore;
+            
+            // Determinar o vencedor
+            if (teamAScore > teamBScore) {
+                winnerText.textContent = "Vencedor: Time A!";
+                winnerBox.className = "box has-background-primary-light";
+                showNotification("Time A venceu o quiz!", "primary");
+            } else if (teamBScore > teamAScore) {
+                winnerText.textContent = "Vencedor: Time B!";
+                winnerBox.className = "box has-background-danger-light";
+                showNotification("Time B venceu o quiz!", "danger");
+            } else {
+                winnerText.textContent = "Empate!";
+                winnerBox.className = "box has-background-info-light";
+                showNotification("O quiz terminou em empate!", "info");
+            }
+        }
+
+        // Reiniciar quiz
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            teamAScore = 0;
+            teamBScore = 0;
+            teamAScoreElement.textContent = "0";
+            teamBScoreElement.textContent = "0";
+            resultsArea.classList.add('is-hidden');
+            quizArea.classList.remove('is-hidden');
+            loadQuestion();
+            showNotification("Quiz reiniciado! Boa sorte para os times!");
+        }
+
+        // Event Listeners
+        buzzerTeamA.addEventListener('click', () => teamBuzzIn('A'));
+        buzzerTeamB.addEventListener('click', () => teamBuzzIn('B'));
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+        revealAllBtn.addEventListener('click', revealAllOptions);
+        closeNotification.addEventListener('click', () => {
+            notification.classList.remove('show');
+        });
+
+        // Iniciar o quiz quando a página carregar
+        window.addEventListener('load', initQuiz);
+    </script>
+</body>
+</html>
