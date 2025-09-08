@@ -7,110 +7,250 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+        }
+        
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            max-height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px;
+            padding: 10px;
         }
+        
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0;
+        }
+        
+        .header-section {
+            flex: 0 0 auto;
+            padding: 0.5rem 0;
+        }
+        
+        .teams-section {
+            flex: 0 0 auto;
+            margin: 0.5rem 0;
+        }
+        
+        .quiz-section {
+            flex: 1 1 auto;
+            overflow: hidden;
+            margin: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quiz-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quiz-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
         .header-title {
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.2rem;
         }
+        
+        .header-subtitle {
+            margin-bottom: 0.5rem;
+        }
+        
         .card {
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 0.5rem;
+            height: 100%;
         }
+        
         .team-card {
             transition: all 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
+        
         .team-card.active {
-            transform: scale(1.03);
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
         }
-        .option-button {
-            transition: all 0.3s;
-            margin: 8px auto;
-            display: block;
-            width: 90%;
+        
+        .team-content {
+            padding: 0.75rem;
         }
-        .option-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        
+        .team-media {
+            margin-bottom: 0.5rem;
         }
+        
+        .score-display {
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            margin: 0.2rem 0;
+        }
+        
         .buzzer {
             transition: all 0.2s;
+            padding: 0.5rem;
+            font-size: 0.9rem;
         }
+        
         .buzzer:active {
             transform: scale(0.95);
         }
-        .score-display {
-            font-size: 3rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        
+        .question-progress {
+            margin: 0.3rem 0;
+            flex: 0 0 auto;
         }
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        
+        .question-text {
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 0 0 auto;
         }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        
+        .reveal-button-container {
+            flex: 0 0 auto;
+            margin: 0.3rem 0;
         }
-        .option-container {
-            min-height: 250px;
+        
+        .options-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(4, 1fr);
+            gap: 0.3rem;
+            margin: 0.3rem 0;
+            overflow: hidden;
+            min-height: 0; /* Importante para o grid funcionar com flex */
         }
-        .auto-reveal-indicator {
-            margin-top: 10px;
+        
+        .option-button {
+            transition: all 0.3s;
+            padding: 0.5rem;
             font-size: 0.9rem;
-            color: #666;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: normal;
+            word-break: break-word;
         }
-        .next-btn-container {
-            margin-top: 20px;
+        
+        .option-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
-        .reveal-all-btn {
-            margin-top: 10px;
+        
+        .quiz-controls {
+            margin: 0.3rem 0;
+            flex: 0 0 auto;
         }
-        .result-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
+        
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
             z-index: 100;
             opacity: 0;
             transform: translateX(100px);
             transition: all 0.5s ease;
+            max-width: 300px;
         }
+        
         .notification.show {
             opacity: 1;
             transform: translateX(0);
         }
+        
         .fade-in {
             animation: fadeIn 0.5s forwards;
         }
+        
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .question-bank-info {
-            font-size: 0.8rem;
-            color: #777;
-            margin-top: 5px;
-        }
+        
         .points-transfer {
             color: #ffdd57;
             font-weight: bold;
-            text-shadow: 0 0 5px rgba(255, 221, 87, 0.5);
+            font-size: 1.2rem;
+            text-shadow: 0 0 3px rgba(255, 221, 87, 0.5);
             animation: pulse 1s infinite;
         }
+        
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
             100% { opacity: 1; }
+        }
+        
+        .result-content {
+            padding: 0.5rem;
+        }
+        
+        .result-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Ajustes responsivos */
+        @media screen and (max-height: 800px) {
+            .question-text {
+                font-size: 1.2rem;
+                min-height: 2.8rem;
+            }
+            
+            .score-display {
+                font-size: 1.8rem;
+            }
+            
+            .options-container {
+                gap: 0.2rem;
+            }
+            
+            .option-button {
+                padding: 0.4rem;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .header-title {
+                font-size: 1.8rem;
+            }
+            
+            .header-subtitle {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -120,30 +260,34 @@
         <div id="notification-message">Operação realizada com sucesso!</div>
     </div>
 
-    <section class="section">
-        <div class="container">
-            <h1 class="title is-1 has-text-centered has-text-white header-title">Semana de Informática</h1>
-            <p class="subtitle is-4 has-text-centered has-text-light">Quiz Competitivo</p>
-            
-            <div class="columns">
+    <div class="container">
+        <!-- Cabeçalho -->
+        <section class="header-section">
+            <h1 class="title is-2 has-text-centered has-text-white header-title">Semana de Informática</h1>
+            <p class="subtitle is-5 has-text-centered has-text-light header-subtitle">Quiz Competitivo</p>
+        </section>
+        
+        <!-- Times -->
+        <section class="teams-section">
+            <div class="columns is-mobile is-variable is-1">
                 <!-- Time A -->
                 <div class="column">
                     <div id="teamA-card" class="card team-card">
-                        <div class="card-content">
-                            <div class="media">
+                        <div class="card-content team-content">
+                            <div class="media team-media">
                                 <div class="media-left">
-                                    <figure class="image is-48x48">
+                                    <figure class="image is-32x32">
                                         <i class="fas fa-desktop has-text-primary"></i>
                                     </figure>
                                 </div>
                                 <div class="media-content">
-                                    <p class="title is-4">Time A</p>
-                                    <p class="subtitle is-6">Clique para responder</p>
+                                    <p class="title is-5">Time A</p>
+                                    <p class="subtitle is-7">Clique para responder</p>
                                 </div>
                             </div>
-                            <div class="content">
+                            <div class="content p-0">
                                 <div class="score-display has-text-centered has-text-primary" id="teamA-score">0</div>
-                                <button id="buzzer-teamA" class="button is-fullwidth is-primary buzzer mt-4">
+                                <button id="buzzer-teamA" class="button is-fullwidth is-primary buzzer">
                                     <span class="icon"><i class="fas fa-bolt"></i></span>
                                     <span>Responder!</span>
                                 </button>
@@ -155,21 +299,21 @@
                 <!-- Time B -->
                 <div class="column">
                     <div id="teamB-card" class="card team-card">
-                        <div class="card-content">
-                            <div class="media">
+                        <div class="card-content team-content">
+                            <div class="media team-media">
                                 <div class="media-left">
-                                    <figure class="image is-48x48">
+                                    <figure class="image is-32x32">
                                         <i class="fas fa-laptop has-text-danger"></i>
                                     </figure>
                                 </div>
                                 <div class="media-content">
-                                    <p class="title is-4">Time B</p>
-                                    <p class="subtitle is-6">Clique para responder</p>
+                                    <p class="title is-5">Time B</p>
+                                    <p class="subtitle is-7">Clique para responder</p>
                                 </div>
                             </div>
-                            <div class="content">
+                            <div class="content p-0">
                                 <div class="score-display has-text-centered has-text-danger" id="teamB-score">0</div>
-                                <button id="buzzer-teamB" class="button is-fullwidth is-danger buzzer mt-4">
+                                <button id="buzzer-teamB" class="button is-fullwidth is-danger buzzer">
                                     <span class="icon"><i class="fas fa-bolt"></i></span>
                                     <span>Responder!</span>
                                 </button>
@@ -178,65 +322,70 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Área do Quiz -->
-            <div class="card">
-                <div class="card-content">
+        </section>
+        
+        <!-- Área do Quiz -->
+        <section class="quiz-section">
+            <div class="card quiz-card">
+                <div class="card-content p-3 quiz-content">
                     <div id="quiz-area">
-                        <div class="has-text-centered mb-5">
-                            <p class="is-size-5 has-text-weight-semibold">Questão <span id="current-question">1</span> de <span id="total-questions">10</span></p>
-                            <p class="question-bank-info">Banco com 130 questões - Sorteadas aleatoriamente</p>
+                        <div class="has-text-centered question-progress">
+                            <p class="is-size-6 has-text-weight-semibold">Questão <span id="current-question">1</span> de <span id="total-questions">10</span></p>
+                            <p class="is-size-7 question-bank-info">Banco com 130 questões - Sorteadas aleatoriamente</p>
                             <progress id="progress" class="progress is-info" value="10" max="100">10%</progress>
                         </div>
                         
-                        <h2 id="question-text" class="title is-3 has-text-centered mb-6">Pergunta será exibida aqui</h2>
+                        <h2 id="question-text" class="title is-4 has-text-centered question-text">Qual destes é um framework JavaScript para construção de interfaces?</h2>
                         
-                        <div class="has-text-centered auto-reveal-indicator">
-                            <p><i class="fas fa-info-circle"></i> As alternativas aparecerão automaticamente uma por uma</p>
-                            <button id="reveal-all-btn" class="button is-small is-warning reveal-all-btn">
+                        <div class="has-text-centered reveal-button-container">
+                            <button id="reveal-all-btn" class="button is-small is-warning">
                                 <span class="icon"><i class="fas fa-forward"></i></span>
-                                <span>Revelar Todas</span>
+                                <span>Revelar Todas as Alternativas</span>
                             </button>
                         </div>
                         
-                        <div id="options-container" class="option-container">
+                        <div id="options-container" class="options-container">
                             <!-- Opções serão inseridas via JavaScript -->
+                            <button class="button option-button is-info">Django</button>
+                            <button class="button option-button is-info">Laravel</button>
+                            <button class="button option-button is-info">React</button>
+                            <button class="button option-button is-info">Spring</button>
                         </div>
                         
-                        <div class="has-text-centered next-btn-container">
-                            <button id="next-btn" class="button is-info is-large">
+                        <div class="has-text-centered quiz-controls">
+                            <button id="next-btn" class="button is-info">
                                 <span class="icon"><i class="fas fa-arrow-right"></i></span>
                                 <span>Próxima Questão</span>
                             </button>
                         </div>
                     </div>
                     
-                    <div id="results-area" class="is-hidden">
+                    <div id="results-area" class="is-hidden result-content">
                         <div class="has-text-centered">
-                            <i class="fas fa-trophy result-icon has-text-warning floating"></i>
-                            <h2 class="title is-2">Quiz Concluído!</h2>
-                            <p class="subtitle is-4">Pontuação Final</p>
+                            <i class="fas fa-trophy result-icon has-text-warning"></i>
+                            <h2 class="title is-3">Quiz Concluído!</h2>
+                            <p class="subtitle is-5">Pontuação Final</p>
                             
-                            <div class="columns is-centered">
+                            <div class="columns is-centered is-mobile">
                                 <div class="column is-half">
-                                    <div class="box">
-                                        <div class="title is-4">Time A</div>
+                                    <div class="box p-2">
+                                        <div class="title is-5">Time A</div>
                                         <div class="score-display has-text-primary" id="final-teamA-score">0</div>
                                     </div>
                                 </div>
                                 <div class="column is-half">
-                                    <div class="box">
-                                        <div class="title is-4">Time B</div>
+                                    <div class="box p-2">
+                                        <div class="title is-5">Time B</div>
                                         <div class="score-display has-text-danger" id="final-teamB-score">0</div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div id="winner-box" class="box has-background-warning">
-                                <h3 class="title is-3" id="winner-text">Vencedor: Time A</h3>
+                            <div id="winner-box" class="box has-background-warning-light p-2">
+                                <h3 class="title is-4" id="winner-text">Vencedor: Time A</h3>
                             </div>
                             
-                            <button id="restart-btn" class="button is-info is-large">
+                            <button id="restart-btn" class="button is-info">
                                 <span class="icon"><i class="fas fa-redo"></i></span>
                                 <span>Jogar Novamente</span>
                             </button>
@@ -244,8 +393,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <script src="questoes.js"></script>
     <script src="funcoes.js"></script>
