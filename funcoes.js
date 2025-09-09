@@ -35,18 +35,22 @@ const closeNotification = document.getElementById('close-notification');
 
 // Função para selecionar 10 questões aleatórias
 function selectRandomQuestions() {
-    // Criar uma cópia do banco de questões
-    const shuffled = [...questionBank];
-    
-    // Embaralhar as questões
-    for (let i = shuffled.length - 1; i > 0; i--) {
+    // Remover duplicatas usando o texto da questão
+    const uniqueQuestions = questionBank.filter(
+        (q, index, self) =>
+            index === self.findIndex(other => other.question === q.question)
+    );
+
+    // Embaralhar as questões únicas
+    for (let i = uniqueQuestions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        [uniqueQuestions[i], uniqueQuestions[j]] = [uniqueQuestions[j], uniqueQuestions[i]];
     }
-    
-    // Selecionar as primeiras 10 questões
-    return shuffled.slice(0, 10);
+
+    // Retornar as primeiras 10
+    return uniqueQuestions.slice(0, 10);
 }
+
 
 // Função para mostrar notificação
 function showNotification(message, type = 'success') {
