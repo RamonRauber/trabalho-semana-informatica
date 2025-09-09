@@ -112,7 +112,7 @@ function startAutoReveal() {
         } else {
             clearInterval(revealInterval);
         }
-    }, 1000);
+    }, 2000);
 }
 
 // Revelar uma alternativa específica
@@ -146,7 +146,7 @@ function resetBuzzers() {
     teamBCard.classList.remove('active');
     buzzerTeamA.disabled = false;
     buzzerTeamB.disabled = false;
-    buzzerTeamA.classList.remove('is-success', 'is-light');
+    buzzerTeamA.classList.remove('is-info', 'is-light');
     buzzerTeamB.classList.remove('is-danger', 'is-light');
     gameActive = true;
 }
@@ -168,14 +168,16 @@ function teamBuzzIn(team) {
     
     if (team === 'A') {
         teamACard.classList.add('active');
-        buzzerTeamA.classList.add('is-success');
+        buzzerTeamA.classList.add('is-info');
         buzzerTeamB.classList.add('is-light');
-        showNotification("Time A pressionou o buzzer primeiro!");
+        showNotification("Time Azul pressionou o buzzer primeiro!");
+
     } else {
         teamBCard.classList.add('active');
         buzzerTeamB.classList.add('is-danger');
         buzzerTeamA.classList.add('is-light');
-        showNotification("Time B pressionou o buzzer primeiro!");
+        showNotification("Time Vermelho pressionou o buzzer primeiro!");
+
     }
 }
 
@@ -201,11 +203,13 @@ function checkAnswer(optionIndex) {
         if (currentTeam === 'A') {
             teamAScore += 10;
             teamAScoreElement.textContent = teamAScore;
-            showNotification("Time A acertou! +10 pontos", "success");
+            showNotification("Time Azul acertou! +10 pontos", "success");
+
         } else {
             teamBScore += 10;
             teamBScoreElement.textContent = teamBScore;
-            showNotification("Time B acertou! +10 pontos", "success");
+            showNotification("Time Vermelho acertou! +10 pontos", "success");
+
         }
         
         questionText.textContent = "Resposta correta! +10 pontos";
@@ -219,12 +223,12 @@ function checkAnswer(optionIndex) {
         if (currentTeam === 'A') {
             teamBScore += 10; // Time B ganha os pontos
             teamBScoreElement.textContent = teamBScore;
-            showNotification("Time A errou! Time B ganha +10 pontos!", "warning");
+            showNotification("Time Azul errou! Time Vermelho ganha +10 pontos!", "warning");
             questionText.innerHTML = "Resposta incorreta! <span class='points-transfer'>+10 pontos para o Time B</span>";
         } else {
             teamAScore += 10; // Time A ganha os pontos
             teamAScoreElement.textContent = teamAScore;
-            showNotification("Time B errou! Time A ganha +10 pontos!", "warning");
+            showNotification("Time Vermelho errou! Time Azul ganha +10 pontos!", "warning");
             questionText.innerHTML = "Resposta incorreta! <span class='points-transfer'>+10 pontos para o Time A</span>";
         }
     }
@@ -261,11 +265,11 @@ function showResults() {
     if (teamAScore > teamBScore) {
         winnerText.textContent = "Vencedor: Time A!";
         winnerBox.className = "box has-background-primary-light";
-        showNotification("Time A venceu o quiz!", "primary");
+        showNotification("Time Azul venceu o quiz!", "primary");
     } else if (teamBScore > teamAScore) {
         winnerText.textContent = "Vencedor: Time B!";
         winnerBox.className = "box has-background-danger-light";
-        showNotification("Time B venceu o quiz!", "danger");
+        showNotification("Time Vermelho venceu o quiz!", "danger");
     } else {
         winnerText.textContent = "Empate!";
         winnerBox.className = "box has-background-info-light";
