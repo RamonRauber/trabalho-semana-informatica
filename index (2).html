@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semana de Informática - Quiz Competitivo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+        }
+        
+        body {
+            min-height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0033cc 0%, #cc0000 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px;
+        }
+        
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0;
+        }
+        
+        .header-section {
+            flex: 0 0 auto;
+            padding: 0.5rem 0;
+        }
+        
+        .teams-section {
+            flex: 0 0 auto;
+            margin: 0.5rem 0;
+        }
+        
+        .quiz-section {
+            flex: 1 1 auto;
+            overflow: hidden;
+            margin: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quiz-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quiz-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header-title {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.2rem;
+        }
+        
+        .header-subtitle {
+            margin-bottom: 0.5rem;
+        }
+        
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+            height: 100%;
+        }
+        
+        .team-card {
+            transition: all 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .team-card.active {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+        
+        .team-content {
+            padding: 0.75rem;
+        }
+        
+        .team-media {
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-display {
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            margin: 0.2rem 0;
+        }
+        
+        .buzzer {
+            transition: all 0.2s;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .buzzer:active {
+            transform: scale(0.95);
+        }
+        
+        .question-progress {
+            margin: 0.3rem 0;
+            flex: 0 0 auto;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 0 0 auto;
+        }
+        
+        .reveal-button-container {
+            flex: 0 0 auto;
+            margin: 0.3rem 0;
+        }
+        
+        .options-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(4, 1fr);
+            gap: 0.3rem;
+            margin: 0.3rem 0;
+            overflow: hidden;
+            min-height: 0; /* Importante para o grid funcionar com flex */
+        }
+        
+        .option-button {
+            transition: all 0.3s;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: normal;
+            word-break: break-word;
+        }
+        
+        .option-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quiz-controls {
+            margin: 0.3rem 0;
+            flex: 0 0 auto;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.5s ease;
+            max-width: 300px;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .points-transfer {
+            color: #ffdd57;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 0 0 3px rgba(255, 221, 87, 0.5);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .result-content {
+            padding: 0.5rem;
+        }
+        
+        .result-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Ajustes responsivos */
+    /*  @media screen and (max-height: 800px) {
+            .question-text {
+                font-size: 1.2rem;
+                min-height: 2.8rem;
+            }
+            
+            .score-display {
+                font-size: 1.8rem;
+            }
+            
+            .options-container {
+                gap: 0.2rem;
+            }
+            
+            .option-button {
+                padding: 0.4rem;
+                font-size: 1.4rem;
+            }
+        }       */
+        
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .header-title {
+                font-size: 1.8rem;
+            }
+            
+            .header-subtitle {
+                font-size: 1rem;
+            }
+        }
+        
+        #restart-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        #restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        #results-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 1.5rem;
+        }
+        
+        /* Estilos para a página inicial */
+        #start-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            height: 100%;
+        }
+        
+        .start-logo {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .start-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .start-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: white;
+            max-width: 600px;
+        }
+        
+        .instructions {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .instructions ul {
+            color: white;
+            text-align: left;
+            margin-left: 1rem;
+        }
+        
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .start-button {
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #ffdd57, #ff3860);
+            color: #363636;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .start-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification is-success" id="notification">
+        <button class="delete" id="close-notification"></button>
+        <div id="notification-message">Operação realizada com sucesso!</div>
+    </div>
+
+    <div class="container">
+        <!-- Página Inicial -->
+        <section id="start-page">
+            <div class="start-logo">
+                <i class="fas fa-laptop-code"></i>
+            </div>
+            <h1 class="start-title">Quiz Competitivo - Semana de Informática</h1>
+            <p class="start-subtitle">Teste seus conhecimentos em tecnologia e computação neste quiz emocionante para duas equipes!</p>
+            
+            <div class="instructions">
+                <h3>Como Jogar:</h3>
+                <ul>
+                    <li>Duas equipes competem para responder perguntas sobre informática</li>
+                    <li>Cada pergunta tem 4 alternativas, sendo apenas uma correta</li>
+                    <li>As alternativas são reveladas uma a uma a cada 2 segundos</li>
+                    <li>A equipe que apertar o buzzer primeiro tem a chance de responder</li>
+                    <li>Resposta correta: <strong>+10 pontos</strong> para a equipe</li>
+                    <li>Resposta errada: <strong>+10 pontos</strong> para a equipe adversária</li>
+                    <li>O quiz possui 10 questões selecionadas aleatoriamente de um banco com mais de 600 perguntas</li>
+                </ul>
+            </div>
+            
+            <button id="start-button" class="button start-button">
+                <span class="icon"><i class="fas fa-play"></i></span>
+                <span>Iniciar Quiz</span>
+            </button>
+        </section>
+        
+        <!-- Cabeçalho -->
+        <section class="header-section hidden" id="game-header">
+            <h1 class="title is-2 has-text-centered has-text-white header-title">Semana de Informática</h1>
+            <p class="subtitle is-5 has-text-centered has-text-light header-subtitle">Quiz Competitivo</p>
+        </section>
+        
+        <!-- Times -->
+        <section class="teams-section hidden" id="teams-section">
+            <div class="columns is-mobile is-variable is-1">
+                <!-- Time A -->
+                <div class="column">
+                    <div id="teamA-card" class="card team-card">
+                        <div class="card-content team-content">
+                            <div class="media team-media">
+                                <div class="media-left">
+                                    <figure class="image is-32x32">
+                                        <i class="fas fa-desktop has-text-primary"></i>
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <p class="title is-5 has-text-info">Time Azul</p>
+                                    <p class="subtitle is-7">Clique para responder</p>
+                                    
+                                </div>
+                            </div>
+                            <div class="content p-0">
+                                <div class="score-display has-text-centered has-text-primary" id="teamA-score">0</div>
+                                <button id="buzzer-teamA" class="button is-fullwidth is-primary buzzer">
+                                    <span class="icon"><i class="fas fa-bolt"></i></span>
+                                    <span>Responder!</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Time B -->
+                <div class="column">
+                    <div id="teamB-card" class="card team-card">
+                        <div class="card-content team-content">
+                            <div class="media team-media">
+                                <div class="media-left">
+                                    <figure class="image is-32x32">
+                                        <i class="fas fa-laptop has-text-danger"></i>
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <p class="title is-5 has-text-danger">Time Vermelho</p>
+                                    <p class="subtitle is-7">Clique para responder</p>
+                                    
+                                </div>
+                            </div>
+                            <div class="content p-0">
+                                <div class="score-display has-text-centered has-text-danger" id="teamB-score">0</div>
+                                <button id="buzzer-teamB" class="button is-fullwidth is-danger buzzer">
+                                    <span class="icon"><i class="fas fa-bolt"></i></span>
+                                    <span>Responder!</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Área do Quiz -->
+        <section class="quiz-section hidden" id="quiz-section">
+            <div class="card quiz-card">
+                <div class="card-content p-3 quiz-content">
+                    <div id="quiz-area">
+                        <div class="has-text-centered question-progress">
+                            <p class="is-size-6 has-text-weight-semibold">Questão <span id="current-question">1</span> de <span id="total-questions">10</span></p>
+                            <p class="is-size-7 question-bank-info">Banco com 630 questões - Sorteadas aleatoriamente</p>
+                            <progress id="progress" class="progress is-info" value="10" max="100">10%</progress>
+                        </div>
+                        
+                        <h2 id="question-text" class="title is-4 has-text-centered question-text">Qual destes é um framework JavaScript para construção de interfaces?</h2>
+                        
+                        <div class="has-text-centered reveal-button-container">
+                            <button id="reveal-all-btn" class="button is-small is-warning">
+                                <span class="icon"><i class="fas fa-forward"></i></span>
+                                <span>Revelar Todas as Alternativas</span>
+                            </button>
+                        </div>
+                        
+                        <div id="options-container" class="options-container">
+                            <!-- Opções serão inseridas via JavaScript -->
+                            <button class="button option-button is-info">Django</button>
+                            <button class="button option-button is-info">Laravel</button>
+                            <button class="button option-button is-info">React</button>
+                            <button class="button option-button is-info">Spring</button>
+                        </div>
+                        
+                        <div class="has-text-centered quiz-controls">
+                            <button id="next-btn" class="button is-info">
+                                <span class="icon"><i class="fas fa-arrow-right"></i></span>
+                                <span>Próxima Questão</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="results-area" class="is-hidden result-content">
+                        <div class="has-text-centered mt-4">
+                            <button id="restart-btn" class="button is-primary">
+                                <span class="icon"><i class="fas fa-redo"></i></span>
+                                <span>Recomeçar Jogo</span>
+                            </button>
+                        </div>
+                        
+                        <div class="has-text-centered">
+                            <i class="fas fa-trophy result-icon has-text-warning"></i>
+                            <h2 class="title is-3">Quiz Concluído!</h2>
+                            <p class="subtitle is-5">Pontuação Final</p>
+                            
+                            <div class="columns is-centered is-mobile">
+                                <div class="column is-half">
+                                    <div class="box p-2">
+                                        <div class="title is-5">Time A</div>
+                                        <div class="score-display has-text-primary" id="final-teamA-score">0</div>
+                                    </div>
+                                </div>
+                                <div class="column is-half">
+                                    <div class="box p-2">
+                                        <div class="title is-5">Time B</div>
+                                        <div class="score-display has-text-danger" id="final-teamB-score">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="winner-box" class="box has-background-warning-light p-2">
+                                <h3 class="title is-4" id="winner-text">Vencedor: Time A</h3>
+                            </div>
+                            
+                            <button id="restart-btn-bottom" class="button is-info">
+                                <span class="icon"><i class="fas fa-redo"></i></span>
+                                <span>Jogar Novamente</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="questoes.js"></script>
+    <script>
+        // Variáveis de estado
+        let currentQuestionIndex = 0;
+        let teamAScore = 0;
+        let teamBScore = 0;
+        let currentTeam = null;
+        let gameActive = false;
+        let revealInterval;
+        let answerSelected = false;
+        let questions = [];
+
+        // Elementos DOM
+        const startPage = document.getElementById('start-page');
+        const gameHeader = document.getElementById('game-header');
+        const teamsSection = document.getElementById('teams-section');
+        const quizSection = document.getElementById('quiz-section');
+        const startButton = document.getElementById('start-button');
+        const teamACard = document.getElementById('teamA-card');
+        const teamBCard = document.getElementById('teamB-card');
+        const teamAScoreElement = document.getElementById('teamA-score');
+        const teamBScoreElement = document.getElementById('teamB-score');
+        const finalTeamAScore = document.getElementById('final-teamA-score');
+        const finalTeamBScore = document.getElementById('final-teamB-score');
+        const buzzerTeamA = document.getElementById('buzzer-teamA');
+        const buzzerTeamB = document.getElementById('buzzer-teamB');
+        const quizArea = document.getElementById('quiz-area');
+        const resultsArea = document.getElementById('results-area');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const restartBtnBottom = document.getElementById('restart-btn-bottom');
+        const winnerText = document.getElementById('winner-text');
+        const winnerBox = document.getElementById('winner-box');
+        const revealAllBtn = document.getElementById('reveal-all-btn');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const closeNotification = document.getElementById('close-notification');
+
+        // Função para mostrar a página do jogo
+        function showGamePage() {
+            startPage.classList.add('hidden');
+            gameHeader.classList.remove('hidden');
+            teamsSection.classList.remove('hidden');
+            quizSection.classList.remove('hidden');
+            initQuiz();
+        }
+
+        // Função para selecionar 10 questões aleatórias
+        function selectRandomQuestions() {
+            // Remover duplicatas usando o texto da questão
+            const uniqueQuestions = questionBank.filter(
+                (q, index, self) =>
+                    index === self.findIndex(other => other.question === q.question)
+            );
+
+            // Embaralhar as questões únicas
+            for (let i = uniqueQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [uniqueQuestions[i], uniqueQuestions[j]] = [uniqueQuestions[j], uniqueQuestions[i]];
+            }
+
+            // Retornar as primeiras 10
+            return uniqueQuestions.slice(0, 10);
+        }
+
+        // Função para mostrar notificação
+        function showNotification(message, type = 'success') {
+            notification.className = `notification is-${type} show`;
+            notificationMessage.textContent = message;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Inicializar quiz
+        function initQuiz() {
+            // Selecionar 10 questões aleatórias
+            questions = selectRandomQuestions();
+            
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            gameActive = true;
+            answerSelected = false;
+            
+            showNotification("Novo jogo iniciado! 10 questões selecionadas aleatoriamente.");
+        }
+
+        // Carregar questão
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            questionText.textContent = currentQuestion.question;
+            
+            // Atualizar barra de progresso
+            progressBar.value = ((currentQuestionIndex + 1) / questions.length) * 100;
+            
+            // Limpar opções anteriores
+            optionsContainer.innerHTML = '';
+            answerSelected = false;
+            
+            // Reiniciar o estado dos buzzers
+            resetBuzzers();
+            
+            // Esconder o botão de próxima pergunta inicialmente
+            nextBtn.classList.add('is-hidden');
+            
+            // Iniciar a revelação automática das opções
+            startAutoReveal();
+        }
+
+        // Iniciar revelação automática das opções
+        function startAutoReveal() {
+            clearInterval(revealInterval);
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            let optionIndex = 0;
+            
+            revealInterval = setInterval(() => {
+                if (optionIndex < currentQuestion.options.length) {
+                    revealOption(optionIndex);
+                    optionIndex++;
+                } else {
+                    clearInterval(revealInterval);
+                }
+            }, 2000);
+        }
+
+        // Revelar uma alternativa específica
+        function revealOption(index) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const option = document.createElement('button');
+            option.className = 'button option-button is-info fade-in';
+            option.textContent = currentQuestion.options[index];
+            option.dataset.index = index;
+            option.addEventListener('click', () => checkAnswer(index));
+            optionsContainer.appendChild(option);
+        }
+
+        // Revelar todas as alternativas de uma vez
+        function revealAllOptions() {
+            clearInterval(revealInterval);
+            const currentQuestion = questions[currentQuestionIndex];
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                revealOption(index);
+            });
+            
+            showNotification("Todas as alternativas foram reveladas!");
+        }
+
+        // Resetar buzzers
+        function resetBuzzers() {
+            currentTeam = null;
+            teamACard.classList.remove('active');
+            teamBCard.classList.remove('active');
+            buzzerTeamA.disabled = false;
+            buzzerTeamB.disabled = false;
+            buzzerTeamA.classList.remove('is-info', 'is-light');
+            buzzerTeamB.classList.remove('is-danger', 'is-light');
+            gameActive = true;
+        }
+
+        // Desativar buzzers
+        function disableBuzzers() {
+            buzzerTeamA.disabled = true;
+            buzzerTeamB.disabled = true;
+            gameActive = false;
+        }
+
+        // Um time pressiona o buzzer
+        function teamBuzzIn(team) {
+            if (!gameActive || answerSelected) return;
+            
+            gameActive = false;
+            currentTeam = team;
+            disableBuzzers();
+            
+            if (team === 'A') {
+                teamACard.classList.add('active');
+                buzzerTeamA.classList.add('is-info');
+                buzzerTeamB.classList.add('is-light');
+                showNotification("Time Azul pressionou o buzzer primeiro!");
+
+            } else {
+                teamBCard.classList.add('active');
+                buzzerTeamB.classList.add('is-danger');
+                buzzerTeamA.classList.add('is-light');
+                showNotification("Time Vermelho pressionou o buzzer primeiro!");
+
+            }
+        }
+
+        // Verificar resposta
+        function checkAnswer(optionIndex) {
+            if (!currentTeam || answerSelected) return;
+            
+            answerSelected = true;
+            const currentQuestion = questions[currentQuestionIndex];
+            const options = optionsContainer.querySelectorAll('.button');
+            
+            // Desabilitar todos os botões após a seleção
+            options.forEach(button => {
+                button.disabled = true;
+            });
+            
+            // Verificar se a resposta está correta
+            if (optionIndex === currentQuestion.correct) {
+                options[optionIndex].classList.remove('is-info');
+                options[optionIndex].classList.add('is-success');
+                
+                // Adicionar pontos
+                if (currentTeam === 'A') {
+                    teamAScore += 10;
+                    teamAScoreElement.textContent = teamAScore;
+                    showNotification("Time Azul acertou! +10 pontos", "success");
+
+                } else {
+                    teamBScore += 10;
+                    teamBScoreElement.textContent = teamBScore;
+                    showNotification("Time Vermelho acertou! +10 pontos", "success");
+
+                }
+                
+                questionText.textContent = "Resposta correta! +10 pontos";
+            } else {
+                options[optionIndex].classList.remove('is-info');
+                options[optionIndex].classList.add('is-danger');
+                options[currentQuestion.correct].classList.remove('is-info');
+                options[currentQuestion.correct].classList.add('is-success');
+                
+                // MODIFICAÇÃO AQUI: Transferir pontos para o outro time
+                if (currentTeam === 'A') {
+                    teamBScore += 10; // Time B ganha os pontos
+                    teamBScoreElement.textContent = teamBScore;
+                    showNotification("Time Azul errou! Time Vermelho ganha +10 pontos!", "warning");
+                    questionText.innerHTML = "Resposta incorreta! <span class='points-transfer'>+10 pontos para o Time B</span>";
+                } else {
+                    teamAScore += 10; // Time A ganha os pontos
+                    teamAScoreElement.textContent = teamAScore;
+                    showNotification("Time Vermelho errou! Time Azul ganha +10 pontos!", "warning");
+                    questionText.innerHTML = "Resposta incorreta! <span class='points-transfer'>+10 pontos para o Time A</span>";
+                }
+            }
+            
+            // Parar a revelação automática
+            clearInterval(revealInterval);
+            
+            // Mostrar o botão de próxima pergunta
+            nextBtn.classList.remove('is-hidden');
+        }
+
+        // Próxima questão
+        function nextQuestion() {
+            // Avançar para a próxima pergunta
+            currentQuestionIndex++;
+            
+            // Verificar se ainda há perguntas
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Mostrar resultados
+        function showResults() {
+            quizArea.classList.add('is-hidden');
+            resultsArea.classList.remove('is-hidden');
+            
+            finalTeamAScore.textContent = teamAScore;
+            finalTeamBScore.textContent = teamBScore;
+            
+            // Determinar o vencedor
+            if (teamAScore > teamBScore) {
+                winnerText.textContent = "Vencedor: Time A!";
+                winnerBox.className = "box has-background-primary-light";
+                showNotification("Time Azul venceu o quiz!", "primary");
+            } else if (teamBScore > teamAScore) {
+                winnerText.textContent = "Vencedor: Time B!";
+                winnerBox.className = "box has-background-danger-light";
+                showNotification("Time Vermelho venceu o quiz!", "danger");
+            } else {
+                winnerText.textContent = "Empate!";
+                winnerBox.className = "box has-background-info-light";
+                showNotification("O quiz terminou em empate!", "info");
+            }
+        }
+
+        // Reiniciar quiz
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            teamAScore = 0;
+            teamBScore = 0;
+            teamAScoreElement.textContent = "0";
+            teamBScoreElement.textContent = "0";
+            resultsArea.classList.add('is-hidden');
+            quizArea.classList.remove('is-hidden');
+            
+            // Selecionar novas questões aleatórias
+            questions = selectRandomQuestions();
+            
+            loadQuestion();
+            showNotification("Novo jogo iniciado! 10 questões selecionadas aleatoriamente.");
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', showGamePage);
+        buzzerTeamA.addEventListener('click', () => teamBuzzIn('A'));
+        buzzerTeamB.addEventListener('click', () => teamBuzzIn('B'));
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+        restartBtnBottom.addEventListener('click', restartQuiz);
+        revealAllBtn.addEventListener('click', revealAllOptions);
+        closeNotification.addEventListener('click', () => {
+            notification.classList.remove('show');
+        });
+    </script>
+</body>
+</html>
