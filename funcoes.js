@@ -51,7 +51,6 @@ function selectRandomQuestions() {
     return uniqueQuestions.slice(0, 10);
 }
 
-
 // Função para mostrar notificação
 function showNotification(message, type = 'success') {
     notification.className = `notification is-${type} show`;
@@ -177,7 +176,6 @@ function teamBuzzIn(team) {
         buzzerTeamB.classList.add('is-danger');
         buzzerTeamA.classList.add('is-light');
         showNotification("Time Vermelho pressionou o buzzer primeiro!");
-
     }
 }
 
@@ -209,7 +207,6 @@ function checkAnswer(optionIndex) {
             teamBScore += 10;
             teamBScoreElement.textContent = teamBScore;
             showNotification("Time Vermelho acertou! +10 pontos", "success");
-
         }
         
         questionText.textContent = "Resposta correta! +10 pontos";
@@ -219,14 +216,14 @@ function checkAnswer(optionIndex) {
         options[currentQuestion.correct].classList.remove('is-info');
         options[currentQuestion.correct].classList.add('is-success');
         
-        // MODIFICAÇÃO AQUI: Transferir pontos para o outro time
+        // Transferir pontos para o outro time
         if (currentTeam === 'A') {
-            teamBScore += 10; // Time B ganha os pontos
+            teamBScore += 10; 
             teamBScoreElement.textContent = teamBScore;
             showNotification("Time Azul errou! Time Vermelho ganha +10 pontos!", "warning");
             questionText.innerHTML = "Resposta incorreta! <span class='points-transfer'>+10 pontos para o Time B</span>";
         } else {
-            teamAScore += 10; // Time A ganha os pontos
+            teamAScore += 10; 
             teamAScoreElement.textContent = teamAScore;
             showNotification("Time Vermelho errou! Time Azul ganha +10 pontos!", "warning");
             questionText.innerHTML = "Resposta incorreta! <span class='points-transfer'>+10 pontos para o Time A</span>";
@@ -242,10 +239,8 @@ function checkAnswer(optionIndex) {
 
 // Próxima questão
 function nextQuestion() {
-    // Avançar para a próxima pergunta
     currentQuestionIndex++;
     
-    // Verificar se ainda há perguntas
     if (currentQuestionIndex < questions.length) {
         loadQuestion();
     } else {
@@ -261,13 +256,12 @@ function showResults() {
     finalTeamAScore.textContent = teamAScore;
     finalTeamBScore.textContent = teamBScore;
     
-    // Determinar o vencedor
     if (teamAScore > teamBScore) {
-        winnerText.textContent = "Vencedor: Time A!";
+        winnerText.textContent = "Vencedor: Time Azul!";
         winnerBox.className = "box has-background-primary-light";
         showNotification("Time Azul venceu o quiz!", "primary");
     } else if (teamBScore > teamAScore) {
-        winnerText.textContent = "Vencedor: Time B!";
+        winnerText.textContent = "Vencedor: Time Vermelho!";
         winnerBox.className = "box has-background-danger-light";
         showNotification("Time Vermelho venceu o quiz!", "danger");
     } else {
@@ -287,12 +281,41 @@ function restartQuiz() {
     resultsArea.classList.add('is-hidden');
     quizArea.classList.remove('is-hidden');
     
-    // Selecionar novas questões aleatórias
     questions = selectRandomQuestions();
-    
     loadQuestion();
     showNotification("Novo jogo iniciado! 10 questões selecionadas aleatoriamente.");
 }
+
+// -----------------------------
+// AJUSTE DE TELA CHEIA (FULLSCREEN)
+// -----------------------------
+
+function updateFullScreenClass() {
+    const fsEl = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || null;
+    const likelyF11 = (window.innerHeight >= (screen.height - 10));
+    if (fsEl || likelyF11) {
+        document.body.classList.add('is-fullscreen');
+    } else {
+        document.body.classList.remove('is-fullscreen');
+    }
+}
+
+document.addEventListener('fullscreenchange', updateFullScreenClass);
+document.addEventListener('webkitfullscreenchange', updateFullScreenClass);
+document.addEventListener('mozfullscreenchange', updateFullScreenClass);
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'F11') {
+        setTimeout(updateFullScreenClass, 100);
+    }
+});
+
+window.addEventListener('resize', () => {
+    clearTimeout(window._fsResizeTimeout);
+    window._fsResizeTimeout = setTimeout(updateFullScreenClass, 120);
+});
+
+// -----------------------------
 
 // Event Listeners
 buzzerTeamA.addEventListener('click', () => teamBuzzIn('A'));

@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+
+
+
+/* ... (mantenha o restante do seu CSS existente) ... */
+
         :root {
             --primary-color: #6a11cb;
             --secondary-color: #2575fc;
@@ -354,6 +359,45 @@
         .hidden {
             display: none !important;
         }
+        /* Quando a página estiver em tela cheia */
+:fullscreen .options-container,
+:-webkit-full-screen .options-container,
+:-moz-full-screen .options-container {
+    font-size: 2.5rem !important; /* Ajuste o tamanho conforme necessário */
+}
+
+:fullscreen .option-button,
+:-webkit-full-screen .option-button,
+:-moz-full-screen .option-button {
+    font-size: 8.5rem !important; /* Fonte maior para os botões */
+    padding: 6rem !important; /* Aumenta o espaço interno */
+}
+
+/* Quando a página estiver em tela cheia */
+:fullscreen .options-container,
+:-webkit-full-screen .options-container,
+:-moz-full-screen .options-container {
+    font-size: 7.5rem !important;
+}
+
+:fullscreen .option-button,
+:-webkit-full-screen .option-button,
+:-moz-full-screen .option-button {
+    font-size: 8.5rem !important;
+    padding: 6rem !important;
+}
+
+/* Caso F11 não acione a Fullscreen API */
+body.is-fullscreen .options-container {
+    font-size: 7.5rem !important;
+}
+
+body.is-fullscreen .option-button {
+    font-size: 8.5rem !important;
+    padding: 6rem !important;
+}
+
+
     </style>
 </head>
 <body>
